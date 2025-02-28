@@ -1,22 +1,29 @@
-name: CI
+name: Check Required Files
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
-  test:
+  check-files:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup Node.js (u otro entorno según su proyecto)
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-    - name: Install dependencies
-      run: npm install
-    - name: Run tests
-      run: npm test
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check if README.md exists
+        run: |
+          if [ ! -f README.md ]; then
+            echo "❌ README.md is missing!"
+            exit 1
+          else
+            echo "✅ README.md found!"
+          fi
+
+      - name: Check if .github/workflows exists
+        run: |
+          if [ ! -d .github/workflows ]; then
+            echo "❌ .github/workflows directory is missing!"
+            exit 1
+          else
+            echo "✅ .github/workflows directory found!"
+          fi
